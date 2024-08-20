@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Q
+from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 class Person(models.Model):
@@ -67,3 +68,20 @@ class Enrollment(models.Model):
 
     def __str__(self):
         return f"{self.student} in {self.course}"
+    
+class customUser(AbstractUser):
+    """We are inheriting  AbstractUser as by using this in our custom model,
+       we define more functionalities that ,that are kind a additional field for django user model."""
+    phone_number=models.CharField(max_length=11,unique=True)
+    user_description=models.CharField(max_length=50)
+    user_Profile_image=models.ImageField(upload_to="profileImage")
+   # username=None  #it not works in some cases.(in initial migration  make the dependencies empty.)
+
+    username=models.EmailField(unique=True,null=True)
+  #  user_email=models.EmailField(unique=True)
+
+    #USERNAME_FIELD tells Django which field should be used as the unique identifier for login purposes
+    USERNAME_FIELD ='phone_number'
+    #Specifies additional fields required during user creation, which is empty in this case.
+    # (in empty case,it will only innclude the USERName_FIELDs and the passward at user creation.)
+    REQUIRED_FIELDS=['username']

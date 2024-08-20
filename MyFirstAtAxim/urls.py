@@ -19,11 +19,14 @@ from django.urls import path
 
 #import views from PracApp
 
-from PracApp.views import *
+from PracApp.views import*
 
 urlpatterns = [
     #path to the home page
     path('admin/', admin.site.urls),
+    #path('',current_datetime,name="datetime"),
+    path('',readAndSendBookContent,name="readAndSendBookContent"),
+    path('read_chunks/',streamlineResponse,name='streamlineResponse')
     path('task_view/<str:para>',task_view,name="task_view"),
     path('add/',Add_Student,name="add"),
     path('students/<sort>',student_views,name="students"),

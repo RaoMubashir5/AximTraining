@@ -40,6 +40,10 @@ INSTALLED_APPS = [
     'PracApp',
 ]
 
+#for using custom user model we have to add this model so django should point sto this instead of the default one.
+
+AUTH_USER_MODEL="PracApp.customUser"
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

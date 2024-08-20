@@ -1,9 +1,13 @@
 from typing import Any
 from django.contrib import admin
 from django.db.models.query import QuerySet
+from django.contrib.auth.models import User
+# from django.contrib.auth.models import get_user_model
 
 # Register your models here.
 from PracApp.models import *
+
+# User=get_user_model()
 
 class customize_filter_for_students_under_eache_lead(admin.SimpleListFilter):
     """This class is customize the filter options in the filter of the admin site.
