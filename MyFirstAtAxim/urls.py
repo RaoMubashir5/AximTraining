@@ -24,5 +24,7 @@ from PracApp.views import *
 urlpatterns = [
     #path to the home page
     path('admin/', admin.site.urls),
-    path('task_view/',task_view,name="task_view"),
+    path('task_view/<str:para>',task_view,name="task_view"),
+    path('add/',Add_Student,name="add"),
+    path('students/<sort>',student_views,name="students"),
 ]

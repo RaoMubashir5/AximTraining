@@ -57,8 +57,8 @@ class course(models.Model):
 
 # Enrollment model as the Through model;;it is now custom django intermediatory table for many to many relation,
 class Enrollment(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE,verbose_name="Enrolled Students")
-    course = models.ForeignKey(course, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE,verbose_name="Enrolled Students",related_name="enrolled")
+    course = models.ForeignKey(course, on_delete=models.CASCADE,related_name="enrolled")
     enrollment_date=models.DateField(verbose_name="Date of Enrollment")
 
     class Meta:
