@@ -133,4 +133,4 @@ def task_view(request,para):
         print(para)
     # Example: Current time minus 1 day for demonstration
     updated = timezone.now() - timezone.timedelta(days=1)
-    return render(request, 'lala.html', {'updated': updated})
+    return render(request, 'test.html', {'updated': updated})
