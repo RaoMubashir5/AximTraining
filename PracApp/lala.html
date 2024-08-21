@@ -1,0 +1,13 @@
+<!-- task.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task View</title>
+</head>
+<body>
+    <h1>Task View</h1>
+    <p>Updated: <a href="{% url 'task' %}">{{ updated|timesince }} ago</a></p>
+</body>
+</html>
