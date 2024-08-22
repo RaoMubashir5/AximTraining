@@ -69,6 +69,7 @@
                     <li>{{ item }}{{ enrollment.course.course_name }}{% if not forloop.last %}</li><br> {% endif %}
                     {% endfor %}
                 </td>
+              
             </tr>
             {% endif %}
             {% endfor %}
@@ -77,6 +78,10 @@
     {% endif %}
     <hr>
     <a href='/students/ sort="simple" '>Student Records</a>
+    <hr>
+    <a href='/'>Home</a>
+    <hr>
+    <a href='/search/'>Back To Search Page</a>
     <hr>
     <button style="width: 95%;height: 10vh; background-color: black;color: aqua;
                    justify-content: center;  border-radius: 12px;align-items: center;margin-left: 2%; " 

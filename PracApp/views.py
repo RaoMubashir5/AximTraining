@@ -5,85 +5,67 @@ from django.views.decorators.http import require_http_methods,require_GET,requir
 from django.http import HttpResponse,StreamingHttpResponse,HttpResponseNotFound,HttpResponseServerError,HttpResponseForbidden
 import random,time
 from django.utils import timezone
-# Create your views here.
 
-@require_http_methods(["GET"],)
-def current_datetime(request):
-    now = datetime.datetime.now()
-    html = "<html><body>It is now %s.</body></html>" %now
-    print(html)
-    return HttpResponse(html)
+#import built in view class and then we will customize it .
+from django.views import View
 
+#First there are function based views,
+#after that we will go through the class base view
 
-@require_GET
-def readAndSendBookContent(request):
     
-    file_iterator=open('simpletextFile.txt')
-    response=HttpResponse(file_iterator,content_type="text/plain",headers={"team":"axim"},) #headers can be set at instanciation
-    response.headers["religion"]="Islam"
-    #print(response.content)
-    response["content-length"]=1000
+
+def task_view(request,para):
+    if para == '34':
+        print(para)
+    # Example: Current time minus 1 day for demonstration
+    updated = timezone.now() - timezone.timedelta(days=1)
+    return render(request, 'test.html', {'updated': updated})
+
+
+            
+class searchClass(View):
+    def get(self,request):
+        return render(request,'search.html',)
     
-    response["name"]="Rao Mubashir"
-    response.headers["age"]=21
-    print(response)
-    file_iterator.close()
-    #return HttpResponseForbidden("Hn bhai hogi request saphall")
-    return response
-
-
-"""Streamlineresponse send data in chunks , by making the server response more efficient,
-   this is good when there is large data to be responded."""
-def yield_file_content(file_name,chunk_size=64):
-
-        #with open the file and closes it itself.(rb means = raw byte)
-        with open(file_name,'rb') as file:
-            while True:
-                chunk=file.read(chunk_size)
-                if chunk:
-                    yield chunk   #Sends each chunk of data to the StreamingHttpResponse
-                else: break
-
-def streamlineResponse(request):
-    response=StreamingHttpResponse(yield_file_content('simpletextFile.txt'), content_type="text/plain")
-    print(response.content)
-    # response['Content-Disposition']:This is like a note you attach to your file when you send it from the server to the user’s browser.
-    # filename="report.pdf" This suggests a name for the file when the user saves it.
-    # attachment: This tells the browser to treat the file as something that should be downloaded, not displayed in the browser window.
-    #response['content-disposition']=f'attachment;file_name="chunkFileDownload.pdf"'
-    return response
-             
-
-
-
-#redering template using render and redirect shortcuts.@require_http_methods(["GET","POST"],)
-def student_views(request,sort):
-     if request.method=="GET" and sort == 'asc':
-        all_objects=Student.objects.all().order_by("-date_of_birth")
-        return render(request,'studentsData.html',{"students":all_objects})
-     elif request.method=="GET" and sort == 'desc':
-        all_objects=Student.objects.all().order_by("date_of_birth")
-        return render(request,'studentsData.html',{"students":all_objects})
-     else:
-        all_objects=Student.objects.all()
-        return render(request,'studentsData.html',{"students":all_objects})
-     return HttpResponseForbidden("only get requests are handled",headers={"content-length":20})
-     
-##Unique roll number generator:def generate_unique_roll_number(existing_roll_numbers, lower_bound=100, upper_bound=1000):
-def returnUniqueRollNo(existing_roll_numbers,lower_bound,upper_bound):
+    def post(self,request):
+        print("POST request: ",request.POST)
+        name=request.POST.get('first_name')
+        students_query_Set=Student.objects.filter(first_name__iexact=name)
+        print(students_query_Set)
+        if students_query_Set.exists():
+            records=True
+            massage_to_send="Here is the Details of the Students against"
+            return render(request,'student_details.html',{'students':students_query_Set,
+                          'student_name':name,'records':records,'massage_send':massage_to_send})
+        else:
+            massage_to_send="There are No Students named : "
+            records=False
+            return render(request,'student_details.html',{'massage_send':massage_to_send,
+                                                          'student_name':name,'records':records})
+def returnUniqueRollNo(ramdom,start,end):
     while True:
-        roll_number = random.randint(lower_bound, upper_bound)
-        if roll_number not in existing_roll_numbers:
+        roll_number=random.randint(start,end)
+        if roll_number in ramdom:
+            continue
+        else:
             return roll_number
 
-@require_http_methods(["GET","POST"],)
-def Add_Student(request):
-    if request.method=="GET":
+class homePage(View):
+
+    def get(self,request):
+        return render(request,'homePage.html')
+        
+
+
+class AddStudentsClass(View):
+    """In class based views we will extend the functionalities of the 
+       view class and than implement customization in it."""
+    def get(self,request):
         courses_obj=course.objects.all()
         return render(request,'addStudents.html',{'courses':courses_obj})
     
-      #check if POST request is not empty.
-    elif request.method=="POST":
+
+    def post(self,request):
         rand_roll=100
         lead=None
         teacher=None
@@ -106,14 +88,10 @@ def Add_Student(request):
                 teacher=random.choice(teachers)
             ramdom_roll=[name.roll_number for name in all_student]
             rand_roll=returnUniqueRollNo(ramdom_roll,100,1000)
-        
-       
-
-        #receiving data from POST request.
         first_name=request.POST.get('first_name')
         last_name=request.POST.get('last_name')
         date_of_birth=request.POST.get('date_of_birth')
-
+        
         course_name_list=request.POST.getlist('course_name')
 
         if (first_name and last_name) and date_of_birth:
@@ -126,36 +104,92 @@ def Add_Student(request):
                 enrollment=Enrollment.objects.create(student=new_student,course=course_obj,enrollment_date=datetime.date.today())
             print(new_student)
             return redirect('add')
+
+        
+class studentList(View):
     
+    def get(self,request,sort):
+        if request.method=="GET" and sort == 'asc':
+            all_objects=Student.objects.all().order_by("-date_of_birth")
+            return render(request,'studentsData.html',{"students":all_objects})
+        elif request.method=="GET" and sort == 'desc':
+            all_objects=Student.objects.all().order_by("date_of_birth")
+            return render(request,'studentsData.html',{"students":all_objects})
+        else:
+            all_objects=Student.objects.all()
+            return render(request,'studentsData.html',{"students":all_objects})
+        return HttpResponseForbidden("only get requests are handled",headers={"content-length":20})
+ 
+    def post(self,request,sort):
+        lead=None
+        all_student= Student.objects.all()
+        if all_student.exists():
+            students_without_group_leads= Student.objects.filter(group_lead__isnull=True)
 
-def task_view(request,para):
-    if para == '34':
-        print(para)
-    # Example: Current time minus 1 day for demonstration
-    updated = timezone.now() - timezone.timedelta(days=1)
-    return render(request, 'test.html', {'updated': updated})
+            if students_without_group_leads.exists():
+                print(students_without_group_leads)
 
-@require_http_methods(['GET'],)
-def search(request):
-    if request.method=="GET":
-        return render(request,'search.html',)
-def directly_routing_using_action(request):
-    if request.method=="POST": 
-            print("POST request: ",request.POST)
-            name=request.POST.get('first_name')
-            students_query_Set=Student.objects.filter(first_name__iexact=name)
-            print(students_query_Set)
-            if students_query_Set.exists():
-                records=True
-                massage_to_send="Here is the Details of the Students against"
-                return render(request,'student_details.html',{'students':students_query_Set,
-                                                            'student_name':name,'records':records,'massage_send':massage_to_send})
+                # Extract the students who don't have a group_lead
+                students_list = [student for student in students_without_group_leads]
+                print(students_list)
+                lead=random.choice(students_list)
+                print(lead)
             else:
-                massage_to_send="There are No Students named : "
-                records=False
-                return render(request,'student_details.html',{'massage_send':massage_to_send,'student_name':name,
-                                                              'records':records})
+                print("All students have group leads.")
+        first_name=request.POST.get('first_name')
+        last_name=request.POST.get('last_name')
+        date_of_birth=request.POST.get('date_of_birth')
+        updated_teacher=request.POST.get('teacher_name')
+        updated_roll=request.POST.get('roll_number')
+        updated_course_name_list=request.POST.getlist('course_name')
+       # lead=request.POST.getlist('group_lead')
+        updated_teach=None
+        print("teacher :",updated_teacher)
+        if updated_teacher is None:
+            updated_teach=None
+        else:   
+            updated_teach=teacher.objects.get(name=updated_teacher)
+
             
+        if len(updated_roll) <= 0:updated_roll=Student.objects.get(id=sort).roll_number
+        if lead is None:updated_teacher=None
+        if len(first_name) <= 0:updated_teacher=Student.objects.get(id=sort).first_name
+        if len(last_name) <= 0:updated_teacher=Student.objects.get(id=sort).last_name
 
 
+        updated_student=Student.objects.get(id=sort)
+        print(updated_teach)
+        updated_student.first_name=first_name
+        updated_student.last_name=last_name
+        updated_student.roll_number=updated_roll
+        updated_student.date_of_birth=date_of_birth
+        updated_student.teacher=updated_teach
+        
+        updated_student.save()
+        print(updated_course_name_list)
+        already_enrolled_courses=[course_reg.course.course_name for course_reg in updated_student.enrolled.all()]
+        print(already_enrolled_courses)
+        for course_obj in course.objects.all():
+            if course_obj.course_name in updated_course_name_list and (course_obj.course_name not in already_enrolled_courses):
+                enrollment=Enrollment.objects.create(student=updated_student,course=course_obj,enrollment_date=datetime.date.today())
+            elif course_obj.course_name not in updated_course_name_list and (course_obj.course_name in already_enrolled_courses):
+                print(updated_student.enrolled.get(course=course_obj.id).delete())
+
+        print(updated_student)
+        return redirect('add')
+
+
+
+
+        
+        
+class updateClass(View):
+    def get(self,request,student_id):
+        student_obj=Student.objects.filter(id=student_id)
+        enrolled_courses=[enroll.course.course_name for enroll in student_obj[0].enrolled.all()]
+        print("Student object: ",student_obj)
+        if student_obj.exists():
+            return render(request,'update.html',{'student':student_obj[0],'enrolled_courses':enrolled_courses,
+                                                  'courses_to_enroll':course.objects.all()})
     
+

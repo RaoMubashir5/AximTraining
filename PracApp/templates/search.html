@@ -6,7 +6,9 @@
 <body>
 
 <h1>Search Student</h1>
-
+<hr>
+<a href='/students/ sort="simple" '>Show student records</a>
+<hr>
 <form method="POST" action="{% url 'formPost' %}">
 {% csrf_token %}
 <label for="1" >Please Enter Student name: </label>

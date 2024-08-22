@@ -24,12 +24,11 @@ from PracApp.views import*
 urlpatterns = [
     #path to the home page
     path('admin/', admin.site.urls),
-    #path('',current_datetime,name="datetime"),
-    path('',readAndSendBookContent,name="readAndSendBookContent"),
-    path('read_chunks/',streamlineResponse,name='streamlineResponse'),
+    path('',homePage.as_view(),name="homePage"),
     path('task_view/<str:para>',task_view,name="task_view"),
-    path('add/',Add_Student,name="add"),
-    path('students/<sort>',student_views,name="students"),
-    path('search/',search,name="search"),
-    path('formPost/',directly_routing_using_action,name="formPost"),
+    path('add/',AddStudentsClass.as_view(),name="add"),
+    path('students/<sort>',studentList.as_view(),name="students"),
+    path('search/',searchClass.as_view(),name="search"),
+    path('formPost/',searchClass.as_view(),name="formPost"),
+     path('update/<student_id>',updateClass.as_view(),name="update"),
     ]
