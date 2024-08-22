@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 import datetime
 from PracApp.models import*
-from django.views.decorators.http import require_http_methods,require_GET
+from django.views.decorators.http import require_http_methods,require_GET,require_POST
 from django.http import HttpResponse,StreamingHttpResponse,HttpResponseNotFound,HttpResponseServerError,HttpResponseForbidden
 import random,time
 from django.utils import timezone
@@ -134,3 +134,28 @@ def task_view(request,para):
     # Example: Current time minus 1 day for demonstration
     updated = timezone.now() - timezone.timedelta(days=1)
     return render(request, 'test.html', {'updated': updated})
+
+@require_http_methods(['GET'],)
+def search(request):
+    if request.method=="GET":
+        return render(request,'search.html',)
+def directly_routing_using_action(request):
+    if request.method=="POST": 
+            print("POST request: ",request.POST)
+            name=request.POST.get('first_name')
+            students_query_Set=Student.objects.filter(first_name__iexact=name)
+            print(students_query_Set)
+            if students_query_Set.exists():
+                records=True
+                massage_to_send="Here is the Details of the Students against"
+                return render(request,'student_details.html',{'students':students_query_Set,
+                                                            'student_name':name,'records':records,'massage_send':massage_to_send})
+            else:
+                massage_to_send="There are No Students named : "
+                records=False
+                return render(request,'student_details.html',{'massage_send':massage_to_send,'student_name':name,
+                                                              'records':records})
+            
+
+
+    

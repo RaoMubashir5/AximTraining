@@ -29,4 +29,7 @@ urlpatterns = [
     path('read_chunks/',streamlineResponse,name='streamlineResponse'),
     path('task_view/<str:para>',task_view,name="task_view"),
     path('add/',Add_Student,name="add"),
-    path('students/<sort>',student_views,name="students"),]
+    path('students/<sort>',student_views,name="students"),
+    path('search/',search,name="search"),
+    path('formPost/',directly_routing_using_action,name="formPost"),
+    ]

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Search student</title>
+</head>
+<body>
+
+<h1>Search Student</h1>
+
+<form method="POST" action="{% url 'formPost' %}">
+{% csrf_token %}
+<label for="1" >Please Enter Student name: </label>
+<input type="text" name="first_name" id="1" required placeholder="tony">
+<button type="submit" >Search</button>
+</form>
+
+</body>
+</html>
