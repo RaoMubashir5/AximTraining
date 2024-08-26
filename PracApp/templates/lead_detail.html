@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Student</title>
+    <title>Group Lead</title>
     <style>
         table {
             width: 100%;
@@ -25,9 +25,7 @@
     </style>
 </head>
 <body>
-    <h1>Student List</h1>
-    <h1>{{massage_send}} {{student_name}} .</h1>
-    {% if records is not False %}
+    <h1>students Under {{student.first_name}} </h1>
     <table>
         <thead>
             <tr>
@@ -41,41 +39,23 @@
             </tr>
         </thead>
         <tbody>
-            {% for student in students %}
-            {% if forloop.counter|divisibleby:2 %}
+            {% for member in group_members %}
             <tr style="color: black;background-color: green;">
-                <td>{{ student.first_name }}</td>
-                <td>{{ student.last_name }}</td>
-                <td>{{ student.date_of_birth }}</td>
-                <td>{{ student.roll_number }}</td>
-                <td>{% if student.group_lead %}{{ student.group_lead.first_name }}{% else %}None{% endif %}</td>
-                <td>{% if student.teacher %}{{ student.teacher.name }}{% else %}None{% endif %}</td>
+                <td>{{ member.first_name }}</td>
+                <td>{{ member.last_name }}</td>
+                <td>{{ member.date_of_birth }}</td>
+                <td>{{ member.roll_number }}</td>
+                <td>{{ member.group_lead.first_name }}</td>
+                <td>{% if member.teacher %}{{ member.teacher.name }}{% else %}None{% endif %}</td>
                 <td>
-                    {% for enrollment in student.enrolled.all %}
+                    {% for enrollment in member.enrolled.all %}
                     <li>{{forloop.counter }}: {{ item }}{{ enrollment.course.course_name }}{% if not forloop.last %}</li><br> {% endif %}
                     {% endfor %}
                 </td>
             </tr>
-            {% else %}
-            <tr style="color: black;background-color: rgb(229, 225, 8);">
-                <td>{{ student.first_name }}</td>
-                <td>{{ student.last_name }}</td>
-                <td>{{ student.date_of_birth }}</td>
-                <td>{{ student.roll_number }}</td>
-                <td>{% if student.group_lead %}{{ student.group_lead.first_name }}{% else %}None{% endif %}</td>
-                <td>{% if student.teacher %}{{ student.teacher.name }}{% else %}None{% endif %}</td>
-                <td>
-                    {% for enrollment in student.enrolled.all %}
-                    <li>{{ item }}{{ enrollment.course.course_name }}{% if not forloop.last %}</li><br> {% endif %}
-                    {% endfor %}
-                </td>
-              
-            </tr>
-            {% endif %}
             {% endfor %}
         </tbody>
     </table>
-    {% endif %}
     <hr>
     <a href='/students/'>Student Records</a>
     <hr>

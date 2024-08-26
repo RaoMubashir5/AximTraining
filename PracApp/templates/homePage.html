@@ -40,17 +40,62 @@
          text-align: center;
          position: fixed;
         }
-      
+        table, th, td {
+  border: 1px solid black;
+}
+      .btn:hover{
+        background-color: #310404;
+        transition: background-color 0.3s ease;
+        color: #f0f0f0;
+     
+      }
     </style>
 </head>
 <body>
     <nav class="nav">
-        <a href='/students/ sort="simple" '>Registered Students</a>
-        <a href="/add/">Add New Student</a>
+        <a href="{% url 'students' %}">Registered Students</a>
+        <a href="add">Add New Student</a>
+        <a href="{% url 'createClassView' %}">Add New Courses</a>
         <a href="/search/">Search Student</a>
     </nav>
+   <div style="display: block; border-radius: 10px;border-color: #000000;border: width 15px; ;margin-bottom: 80px;align-self: center;margin-left: 20%;">
+    <table style="border-radius: 20px;border-width: 10px;border-color:black ;">
+        <header style="position: fixed;color: #000000;background-color: aquamarine; top: 0;width: 100%;">
+        <thead style="padding: 10px;">
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Date of Birth</th>
+                <th>Roll Number</th>
+                <th>Group Lead</th>
+                <th>Teacher</th>
+                <th>Enrolled Courses</th>
+            </tr>
+      
+        </thead>
+    </header>
+        <tbody style="padding: 10px;">
+            {% for student in students %}
+            <tr style="color: black;background-color: green;">
+                <td>{{ student.first_name }}</td>
+                <td>{{ student.last_name }}</td>
+                <td>{{ student.date_of_birth }}</td>
+                <td>{{ student.roll_number }}</td>
+                <td>{% if student.group_lead %}{{ student.group_lead.first_name }}{% else %}None{% endif %}</td>
+                <td>{% if student.teacher %}{{ student.teacher.name }}{% else %}None{% endif %}</td>
+                <td style="padding: 5px;">
+                    {% for enrollment in student.enrolled.all %}
+                    <li>{{forloop.counter }}: {{ item }}{{ enrollment.course.course_name }}{% if not forloop.last %}</li><br> {% endif %}
+                    {% endfor %}
+                </td>
+               <td> <button class="btn" type="button" onclick="window.location.href='{% url 'update' slug_paramater=student.id %}'">Update</button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
     <footer class="footer">
-     <p>Axim</p>
-    </footer>
+     <p>Axim: {{name}} ; Mentor({{mentor}}) .</p>
 </body>
 </html>

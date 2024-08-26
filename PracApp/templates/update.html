@@ -10,7 +10,7 @@
 <body>
 <h1>You Can update student Credentials:{{student.first_name}}</h1>
 <hr>
-<form method="POST" action="{% url 'students' sort=student.id %}">
+<form method="POST" action="{% url 'students' %}?pk={{student.id}}">
     {% csrf_token %}
     <div class="form-group">
         <label>First Name : </label>
@@ -41,7 +41,7 @@
         <label>{{student.first_name}} is Enrolled in following courses : </label><br>
         {% for Avail_course in courses_to_enroll %}
             <!-- <h1>{{enrollment.course.course_name}}....{{enrollment}}....{{enrollment.course}}..{{enrollment}}...</h1> -->
-            <input type="checkbox" name="course_name" value="{{Avail_course.course_name}}" id="courses"
+            <input type="checkbox" name="course_name"  id="courses" value="{{Avail_course}}"
              {% if Avail_course.course_name in enrolled_courses %} checked="True" {% endif %}>: {{Avail_course.course_name}}<br>
         {% endfor %}
     </div>
@@ -49,7 +49,7 @@
     <button type="submit">Update</button>
     <hr>
  </form>
- 
+ <button type="button" onclick="window.location.href='{% url 'students' %}?pk={{student.id}}'">Go Back to Students</button>
      
 </body>
 </html>

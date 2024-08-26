@@ -27,9 +27,12 @@
 <body>
     <h1>Student List</h1>
     <hr>
-    <a href="{% url 'students' sort='asc' %}">Sort:New to Old</a>
+    <a href="{% url 'students' %}?sort=asc">Sort by Date of Birth Ascending</a>
     <hr>
-    <a href="{% url 'students' sort='desc' %}">Sort:Old to New</a>
+    <a href="{% url 'students' %}?sort=desc">Sort by Date of Birth Descending</a>
+    <hr>
+    <hr>
+    <a href="{% url 'students' %}?display=lead">Group Leads</a>
     <hr>
     <a href='/'>Home</a>
     <hr>
@@ -51,7 +54,11 @@
             {% for student in students %}
             {% if forloop.counter|divisibleby:2 %}
             <tr style="color: black;background-color: green;">
-                <td>{{ student.first_name }}</td>
+                {% if student.group_lead is None %}
+                <td><a href=" {% url 'LeadtDetailView' student.id %}  ">{{student.first_name}}</a></td>
+                {% else %}
+                <td> {{student.first_name }}</td>
+                {% endif %}
                 <td>{{ student.last_name }}</td>
                 <td>{{ student.date_of_birth }}</td>
                 <td>{{ student.roll_number }}</td>
@@ -62,11 +69,15 @@
                     <li>{{forloop.counter }}: {{ item }}{{ enrollment.course.course_name }}{% if not forloop.last %}</li><br> {% endif %}
                     {% endfor %}
                 </td>
-               <td> <button type="button" onclick="window.location.href='{% url 'update' student_id=student.id %}'">Update</button></td>
+                <td> <button type="button" onclick="window.location.href='{% url 'update_student' student.id %}'">Update</button></td> 
             </tr>
             {% else %}
             <tr style="color: black;background-color: rgb(229, 225, 8);">
-                <td>{{ student.first_name }}</td>
+                {% if student.group_lead is None %}
+                <td><a href=" {% url 'LeadtDetailView' student.id %}  ">{{student.first_name}}</a></td>
+                {% else %}
+                <td> {{student.first_name }}</td>
+                {% endif %}
                 <td>{{ student.last_name }}</td>
                 <td>{{ student.date_of_birth }}</td>
                 <td>{{ student.roll_number }}</td>
@@ -77,7 +88,7 @@
                     <li>{{forloop.counter }}: {{ item }}{{ enrollment.course.course_name }}{% if not forloop.last %}</li><br> {% endif %}
                     {% endfor %}
                 </td>
-               <td><button type="button" onclick="window.location.href='{% url 'update' student_id=student.id %}'">Update</button></td>
+              <td> <button type="button" onclick="window.location.href='{% url 'update_student' student.id %}'">Update</button></td>  
             </tr>
             {% endif %}
             {% endfor %}
@@ -87,6 +98,6 @@
     <button style="width: 95%;height: 10vh; background-color: black;color: aqua;
                    justify-content: center;  border-radius: 12px;align-items: center;margin-left: 2%; " 
                                            type="button" onclick="window.location.href='/add/'">Add New Student</button>
-  
+  <p>there should be some data: {{sort}}</p>
 </body>
 </html>

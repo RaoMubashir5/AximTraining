@@ -24,11 +24,20 @@ from PracApp.views import*
 urlpatterns = [
     #path to the home page
     path('admin/', admin.site.urls),
-    path('',homePage.as_view(),name="homePage"),
+    path('',HomePageView.as_view(extra_context={"mentor":"Salman Bhai"}),name="homePage"),#we are passwing extra contexts as well.
+    #this will intansiate the HomePageView class instance.
+    #and call respective methods fot the corresponding request.
+
     path('task_view/<str:para>',task_view,name="task_view"),
     path('add/',AddStudentsClass.as_view(),name="add"),
-    path('students/<sort>',studentList.as_view(),name="students"),
+    path('students/',studentsListView.as_view(),name="students"),#slug accepts any data type keyword arg
     path('search/',searchClass.as_view(),name="search"),
-    path('formPost/',searchClass.as_view(),name="formPost"),
-     path('update/<student_id>',updateClass.as_view(),name="update"),
+    path('formPost/',searchDetailView.as_view(),name="formPost"),
+    path('update/<slug_paramater>',updateStudentDetail.as_view(),name="update"),
+    path('updateStudent/<int:pk>/', StudentUpdateView.as_view(), name='update_student'),
+    path('LeadtDetailView/<slug_paramater>', LeadtDetailView.as_view(), name='LeadtDetailView'),
+    
+    
+    path('createClassView/', createClassView.as_view(), name='createClassView'),
+    # Add other URL patterns here
     ]

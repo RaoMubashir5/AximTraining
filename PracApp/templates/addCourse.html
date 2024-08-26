@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>add new course</title>
+</head>
+<body>
+
+<h1>My First Heading</h1>
+<p>My first paragraph.</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <label for="1">Please enter the Name of the course: </label>
+    <input type="text" name="course_name" required placeholder="English"> 
+    <button type="submit" >Submit</button>
+</form>
+
+</body>
+</html>
