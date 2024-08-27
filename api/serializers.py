@@ -4,11 +4,11 @@ from rest_framework.renderers import JSONRenderer #it is to convert the python d
 from api.models import User
 
 # ...........................validator().............................
-def checkFirstLetter(value):
-    if not value[0].isupper():
-        raise serializers.ValidationError("country name's first letter should be capital")
-    else:
-        return value
+# def checkFirstLetter(value):
+#     if not value[0].isupper():
+#         raise serializers.ValidationError("country name's first letter should be capital")
+#     else:
+#         return value
     
 allowed_countries = [ 'united states', 'canada', 'united kingdom', 'germany', 'france', 'australia',
                       'japan', 'india', 'china', 'brazil', 'russia', 'south korea', 'mexico',
@@ -20,36 +20,40 @@ class UserSerializer(serializers.ModelSerializer):
      #do not need to declare the fields
 
      #for validators you have to do only dor the global that is defined above .
-    user_country=serializers.CharField(max_length=20,style={'placeholder':'pakistan','required':True},validators=[checkFirstLetter]) 
+   # user_country=serializers.CharField(max_length=20,style={'placeholder':'pakistan','required':True},validators=[checkFirstLetter]) 
    
     class Meta:
         model=User
         fields='__all__'  # exclude=['roll_number']   ;;; fields=['user_name','roll_number'] 
         #validations
-        read_only_fields=['user_email']
+        #read_only_fields=['user_email']
         #we can do  itlike this as well >> extra_kwargs=['user_email':{read_only=True},]
 
-        #NOTE other object validations and field validation works as in the serializers.
+       ###NOte other object validations and field validation works as in the serializers.
         #.............................validate_<field_real_name>.................................
             # There are the validations fro each field this method  would be called when the serialized.is_valid() function is called.
 
     def validate_user_country(self,value):
-        if  value.lower() not in allowed_countries:
-            raise serializers.ValidationError("Sorry,Your country is not allowed!!")
+        if value:
+            if  value.lower() not in allowed_countries:
+                raise serializers.ValidationError("Sorry,Your country is not allowed!!")
+            else:
+                return value.capitalize()  
         else:
-            return value.capitalize()    
+            return value.capitalize()   
 
             # .............................validate(self,data).................................
             # There are the validations for an object that there would be multiple fields to validate, when the serialized.is_valid() function is called.
     def validate(self,data):
         country=data.get('user_country')
         age=data.get('user_age')
-
-        if (country.lower() in ['united states', 'canada', 'united kingdom', 'germany', 'france']) and age > 30:
-            raise serializers.ValidationError('Your country does not Allow Candidate with this Age greater than 30')
+        if country:
+            if (country.lower() in ['united states', 'canada', 'united kingdom', 'germany', 'france']) and age > 30:
+                raise serializers.ValidationError('Your country does not Allow Candidate with this Age greater than 30')
+            else:
+                return data
         else:
             return data
-
 
     
     
