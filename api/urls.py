@@ -15,18 +15,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include  # Correctly importing `include`
+from django.urls import path
 
-# # Import views from your app
-# from PracApp import views  # Assuming `PracApp` is your app's name
+#import views from PracApp
 
-# Import views from the `api` app or specific views if necessary
-from api.views import *  # Importing all views from `api.views`
+
+from api.views import *
 
 urlpatterns = [
-    # Path to the admin page
-    path('admin/', admin.site.urls), #it should be either in the specific app urls or not .
-    
-    # Path to the API URLs
-    path('api/', include('api.urls')),  # Assuming you have `api/urls.py` for your API routes
+    #path to the home page
+    path('user/', allUserView,name="UserView"),
+    path('user/<int:pk>', detailUserView,name="singleUser"),
+    path('delete/<int:pk>', deleteUserView,name="delete"),
+    path('create/', createUserView,name="create"),
+    path('update/<int:pk>', updateView,name="update"),
 ]
