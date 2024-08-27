@@ -51,10 +51,10 @@ print(data.get('errors'))
 
 # .................PATCH.........................
 
-# URL='http://127.0.0.1:8000/api/update/6'
+# URL='http://127.0.0.1:8000/api/update/12'
 
 
-# user_Data= {'user_age': 33, 'user_country': 'Poland'}
+# user_Data= {'user_email': 'France@gmail.com'}
 
 # #use dumps fucntion to conver the python to json and use the . To convert a JSON string back into a Python object, you use json.loads().
 
