@@ -7,67 +7,52 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-import io #it to parse the bytes objects into stream
+
+#Generic API views
+
+from rest_framework.generics import GenericAPIView #it is for generic methods and attributes
+from rest_framework.mixins import ListModelMixin  #it is for model listing
+from rest_framework.mixins import CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,DestroyModelMixin
+from django.db.models import Max
+#it is for model creation
 
 
-from rest_framework.parsers import JSONParser  #it is used to parse the json data to python native data
+class ListModelForUserClass(ListModelMixin,GenericAPIView,CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,DestroyModelMixin):
 
-# Create your views here.
-# @api_view(['GET'])
-# def simpleApi(request):
-
-#     return Response("My name is rao mubashir") #it accepts the python native data, key - value pairs but you can pass string as well
-
-# @api_view(['GET']) replaced by APIVIEW in classed based views
-class UserClassBasedView(APIView):
-
-    # def get(self,request):
-
-    #     objects=User.objects.all()
-    #     print("simple model objects: ",objects)  # simple model objects
-
-    #     serializer=UserSerializer(objects,many=True) #serilizing the data
-
-    #     print('serializer : ',serializer.data) #display the serilized data
-
-    #     # json_data=JSONRenderer().render(serializer.data)  #it would convert the data in bytes object():raw bytes
-    #     # # Convert bytes to strin
-    #     # # json_string = json_data.decode('utf-8')
-
-    #     # print('json_data : ',json_data)
-    #     # return HttpResponse(json_data,content_type='application/json')
-
-    #     #rather than all the above code you can return jsonresponse that do convert the serlized data dict in json itself and send it as response.
-    #     return Response(serializer.data) #by default safe= True hota ha
-
-  
-    def get(self,request,pk=None):
-        if pk is not None:
-            try:
-                objects=User.objects.get(id=pk)
-            except User.DoesNotExist:
-                return Response({'msg': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-            
-            print("simple model objects: ",objects)  # simple model objects
-
-            serializer=UserSerializer(objects,many=False) #serilizing the data
+    #queryset=User.objects.all()    #what is the query for data retrieval,;;we can also do get_queryset() that is better than this
+    serializer_class=UserSerializer  #define which class to use for serialization
+    
+    def get(self, request, *args, **kwargs):
+        
+        if self.kwargs.get('pk'):
+            return self.retrieve(request, *args, **kwargs)
         else:
-            objects=User.objects.all()
-            print("simple model objects: ",objects)  # simple model objects
+            return self.list(request, *args, **kwargs)
 
-            serializer=UserSerializer(objects,many=True) #serilizing the data
-        print('serializer : ',serializer.data) #display the serilized data
+    
+    def patch(self,request,*args,**kwargs):
 
-        #   json_data=JSONRenderer().render(serializer.data)  #it would convert the data in bytes object():raw bytes
-        # Convert bytes to strin
-        # json_string = json_data.decode('utf-8')
+        return self.partial_update(request,*args,**kwargs)
+    
+    def put(self,request,*args,**kwargs):
 
-        # print('json_data : ',json_data)
-        # return HttpResponse(json_data,content_type='application/json')
+        return self.update(request,*args,**kwargs)
+   
+    def delete(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
 
-        return Response(serializer.data)
 
+    def get_queryset(self):
+        query=User.objects.all()
+        return query
+    
+    def post(self,request,*args,**kwargs):
+        print(request.data)  
+        return self.create(request,*args,**kwargs)
+       
 
+     
+class UserClassBasedView(APIView):
 
     def delete(self,request,pk):
         try:

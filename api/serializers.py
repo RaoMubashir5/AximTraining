@@ -28,6 +28,7 @@ class UserSerializer(serializers.ModelSerializer):
         #validations
         #read_only_fields=['user_email']
         #we can do  itlike this as well >> extra_kwargs=['user_email':{read_only=True},]
+        
 
        ###NOte other object validations and field validation works as in the serializers.
         #.............................validate_<field_real_name>.................................
