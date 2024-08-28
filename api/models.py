@@ -9,4 +9,6 @@ class User(models.Model):
     
     def __str__(self) -> str:
         return f'{self.user_name}'
+    class Meta:
+        ordering=['user_age']
     

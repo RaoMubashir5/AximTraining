@@ -24,9 +24,16 @@ from api.views import *
 
 urlpatterns = [
     #path to the home page
-    path('user/', allUserView,name="UserView"),
-    path('user/<int:pk>', detailUserView,name="singleUser"),
-    path('delete/<int:pk>', deleteUserView,name="delete"),
-    path('create/', createUserView,name="create"),
-    path('update/<int:pk>', updateView,name="update"),
+    # path('user/', allUserView,name="UserView"),
+    # path('user/<int:pk>', detailUserView,name="singleUser"),
+    # path('delete/<int:pk>', deleteUserView,name="delete"),
+    # path('create/', createUserView,name="create"),
+    # path('update/<int:pk>', updateView,name="update"),
+
+    path('user/', UserClassBasedView.as_view(),name="UserView"),
+    path('user/<int:pk>',UserClassBasedView.as_view(),name="singleUser"),
+    path('delete/<int:pk>', UserClassBasedView.as_view(),name="delete"),
+    path('create/', UserClassBasedView.as_view(),name="create"),
+    path('update/<int:pk>', UserClassBasedView.as_view(),name="update"),
+    path('update/<int:pk>', UserClassBasedView.as_view(),name="update"),
 ]

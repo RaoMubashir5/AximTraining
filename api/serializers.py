@@ -36,7 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_user_country(self,value):
         if value:
             if  value.lower() not in allowed_countries:
-                raise serializers.ValidationError("Sorry,Your country is not allowed!!")
+                raise serializers.ValidationError(f"Sorry,Your country is not allowed!! <....> allowed_countries:> {str(allowed_countries)} .")
             else:
                 return value.capitalize()  
         else:
