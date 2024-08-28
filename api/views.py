@@ -28,23 +28,32 @@ class ListModelForUserClass(ListModelMixin,GenericAPIView,CreateModelMixin,Retri
             return self.retrieve(request, *args, **kwargs)
         else:
             return self.list(request, *args, **kwargs)
+        
+    def put(self,request,*args,**kwargs):
 
+        return self.update(request,*args,**kwargs)
     
     def patch(self,request,*args,**kwargs):
 
         return self.partial_update(request,*args,**kwargs)
     
-    def put(self,request,*args,**kwargs):
-
-        return self.update(request,*args,**kwargs)
-   
     def delete(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
 
 
     def get_queryset(self):
-        query=User.objects.all()
-        return query
+        queryset = User.objects.all()
+        
+        # Get the 'min_age' and 'max_age' query parameters
+        min_age = self.request.GET.get('min_age')
+        max_age = self.request.GET.get('max_age')
+        
+        # Filter the queryset based on the age range
+        if min_age and max_age:
+            queryset = queryset.filter(user_age__gte=min_age, user_age__lte=max_age)
+        
+        
+        return queryset
     
     def post(self,request,*args,**kwargs):
         print(request.data)  

@@ -34,10 +34,4 @@ urlpatterns = [
     path('user/<int:pk>', ListModelForUserClass.as_view(),name="UserView"),
     path('cr/', ListModelForUserClass.as_view(),name="cr"),
     path('del/<int:pk>', ListModelForUserClass.as_view(),name="del"),
-    path('up/<int:pk>', ListModelForUserClass.as_view(),name="up"),
-    path('user/<int:pk>',UserClassBasedView.as_view(),name="singleUser"),
-    path('delete/<int:pk>', UserClassBasedView.as_view(),name="delete"),
-    path('create/', UserClassBasedView.as_view(),name="create"),
-    path('update/<int:pk>', UserClassBasedView.as_view(),name="update"),
-    path('update/<int:pk>', UserClassBasedView.as_view(),name="update"),
-]
+    path('up/<int:pk>', ListModelForUserClass.as_view(),name="up"), ]
