@@ -24,4 +24,6 @@ from PracApp.views import *
 urlpatterns = [
     #path to the home page
     path('admin/', admin.site.urls),
+    path('register/',register,name="register"),
+    path('userRecord/',userRecord,name="userRecord"),
 ]
