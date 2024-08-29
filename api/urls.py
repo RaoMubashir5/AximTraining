@@ -30,8 +30,9 @@ urlpatterns = [
     # path('create/', createUserView,name="create"),
     # path('update/<int:pk>', updateView,name="update"),
 
-    path('user/', ListModelForUserClass.as_view(),name="UserView"),
-    path('user/<int:pk>', ListModelForUserClass.as_view(),name="UserView"),
-    path('cr/', ListModelForUserClass.as_view(),name="cr"),
-    path('del/<int:pk>', ListModelForUserClass.as_view(),name="del"),
-    path('up/<int:pk>', ListModelForUserClass.as_view(),name="up"), ]
+    path('user/', classCreateAndListing.as_view(),name="UserView"),
+    path('user/<int:pk>', concretelistModelForUserClass.as_view(),name="UserView"),
+    # path('cr/', concretelistModelForUserClass.as_view(),name="cr"),
+    # path('del/<int:pk>', concretelistModelForUserClass.as_view(),name="del"),
+    # path('up/<int:pk>', concretelistModelForUserClass.as_view(),name="up"), 
+    ]
