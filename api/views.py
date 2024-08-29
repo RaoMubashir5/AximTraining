@@ -1,55 +1,135 @@
-from django.shortcuts import render
 from api.models import User
 from api.serializers import UserSerializer
-from rest_framework.renderers import JSONRenderer
-from django.http import HttpResponse,JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
 #Generic API views
 
-from rest_framework.generics import GenericAPIView #it is for generic methods and attributes
-from rest_framework.mixins import ListModelMixin  #it is for model listing
-from rest_framework.mixins import CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,DestroyModelMixin
-from django.db.models import Max
-from rest_framework.generics import ListAPIView,RetrieveAPIView,CreateAPIView,UpdateAPIView,DestroyAPIView
+
+from rest_framework import viewsets
 #it is for model creation
 
-#collective views:
+class UserViewSet(viewsets.ViewSet):
 
-from rest_framework.generics import RetrieveUpdateDestroyAPIView,ListCreateAPIView  # (combi of three)
+    def list(self,request):
+        print('basename: ',self.basename)
+        print('action: ',self.action)
+        print('detail: ',self.detail)
+        print('description: ',self.description)
+        print('suffix: ',self.suffix)
+        print('name: ',self.name)
 
+        user_obj=User.objects.all()
+        serialized=UserSerializer(user_obj,many=True) #PAssing data=user_obj is for the deserializaions
+        print(serialized.data)
+            #resp={'msg':"here is your data ",'error':serialized.errors}
+        return Response(serialized.data)
+    
+    def retrieve(self,request,pk=None):
 
-class concretelistModelForUserClass(RetrieveUpdateDestroyAPIView):
+        print('basename: ',self.basename)
+        print('action: ',self.action)
+        print('detail: ',self.detail)
+        print('description: ',self.description)
+        print('suffix: ',self.suffix)
+        print('name: ',self.name)
 
-    serializer_class=UserSerializer  #define which class to use for serialization
+        id=pk
+        if id is not None:
+            user_obj=User.objects.get(id=id)
+            serialized=UserSerializer(user_obj)
+            print(serialized.data)
+            #resp={'msg':"here is your data ",'error':serialized.errors}
+            return Response(serialized.data)
+    
 
-    def get_queryset(self):
-        queryset = User.objects.all()
         
-        # Get the 'min_age' and 'max_age' query parameters
-        min_age = self.request.GET.get('min_age')
-        max_age = self.request.GET.get('max_age')
-        
-        # Filter the queryset based on the age range
-        if min_age and max_age:
-            queryset = queryset.filter(user_age__gte=min_age, user_age__lte=max_age)
-        return queryset    
 
-class classCreateAndListing(ListCreateAPIView):
+    def partial_update(self,request,pk=None):
 
-    serializer_class=UserSerializer
-    def get_queryset(self):
-        queryset = User.objects.all()
+        print('basename: ',self.basename)
+        print('action: ',self.action)
+        print('detail: ',self.detail)
+        print('description: ',self.description)
+        print('suffix: ',self.suffix)
+        print('name: ',self.name)
+
+
+        id =pk
+
+        if id is not None:
+            user_instance=User.objects.get(id=id)
+            serialized_data=UserSerializer(user_instance,data=request.data,partial=True)
+            if serialized_data.is_valid():
+                serialized_data.save()
+                resp={"msg":"User data is updated patch",'error':serialized_data.errors}
+                return Response(serialized_data.data)
+            else:
+                return Response(serialized_data.errors)
+
+    def update(self,request,pk=None):
+
+        print('basename: ',self.basename)
+        print('action: ',self.action)
+        print('detail: ',self.detail)
+        print('description: ',self.description)
+        print('suffix: ',self.suffix)
+        print('name: ',self.name)
+
+        id =pk
+
+        if id is not None:
+            user_instance=User.objects.get(id=id)
+            serialized_data=UserSerializer(user_instance,data=request.data)
+            if serialized_data.is_valid():
+                serialized_data.save()
+                resp={"msg":"User data is updated put",'error':serialized_data.errors}
+                return Response(serialized_data.data)
+            else:
+                return Response(serialized_data.errors)
+            
+
+    def create(self,request):
+
+        print('basename: ',self.basename)
+        print('action: ',self.action)
+        print('detail: ',self.detail)
+        print('description: ',self.description)
+        print('suffix: ',self.suffix)
+        print('name: ',self.name)
         
-        # Get the 'min_age' and 'max_age' query parameters
-        min_age = self.request.GET.get('min_age')
-        max_age = self.request.GET.get('max_age')
+        serialized_data=UserSerializer(data=request.data)
+        if serialized_data.is_valid():
+            serialized_data.save()
+            resp={"msg":"User data is created ",'error':serialized_data.errors}
+            return Response(serialized_data.data)
+        else:
+            return Response(serialized_data.errors)
         
-        # Filter the queryset based on the age range
-        if min_age and max_age:
-            queryset = queryset.filter(user_age__gte=min_age, user_age__lte=max_age)
-        return queryset
+
+    def destroy(self,request,pk=None):
+        
+        print('basename: ',self.basename)
+        print('action: ',self.action)
+        print('detail: ',self.detail)
+        print('description: ',self.description)
+        print('suffix: ',self.suffix)
+        print('name: ',self.name)
+
+
+
+        id=pk
+
+        if pk is not None:
+
+            User_to_delete=User.objects.get(id=id).delete()
+            resp={"msg":"User IS Successfully Deleted"}
+            return Response(resp)
+        else:
+            return Response(User_to_delete.errors)
+
+
+   
+
+
      

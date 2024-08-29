@@ -28,5 +28,5 @@ urlpatterns = [
     path('admin/', admin.site.urls), #it should be either in the specific app urls or not .
     
     # Path to the API URLs
-    path('api/', include('api.urls')),  # Assuming you have `api/urls.py` for your API routes
+    path('', include('api.urls')),  # Assuming you have `api/urls.py` for your API routes
 ]
