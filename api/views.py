@@ -8,8 +8,8 @@ from rest_framework import status
 
 from rest_framework import viewsets
 #it is for model creation
-
-class UserViewSet(viewsets.ModelViewSet):
+# Read only model viewsets
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class=UserSerializer
     # queryset=User.objects.all()  it is attribute btu we can use the function as well to customize 
