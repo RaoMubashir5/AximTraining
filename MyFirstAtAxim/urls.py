@@ -29,4 +29,6 @@ urlpatterns = [
     
     # Path to the API URLs
     path('api/', include('api.urls')),  # Assuming you have `api/urls.py` for your API routes
+
+    path('mub/',include('rest_framework.urls')),
 ]

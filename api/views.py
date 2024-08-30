@@ -4,9 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-from rest_framework.authentication import BasicAuthentication
+from rest_framework.authentication import BasicAuthentication,SessionAuthentication,TokenAuthentication
 
-from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
+from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser,IsAuthenticatedOrReadOnly
 #Generic API views
 
 from django.contrib.auth import logout
@@ -19,8 +19,8 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset=User.objects.all()
 
     #overriding the global authenticationa and permission to allow any.
-    authentication_classes=[BasicAuthentication]
-    permission_classes=[IsAdminUser]
+    authentication_classes=[SessionAuthentication]
+    permission_classes=[IsAuthenticatedOrReadOnly]
 
   
    

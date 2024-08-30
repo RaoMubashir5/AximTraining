@@ -128,6 +128,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #globally defined the authenticatin and permissions for all classes
 #and these changes can be override
-REST_FRAMEWORK={
-    'DEFAULT_AUTHENTICATION_CLASSES':['rest_framework.authentication.BasicAuthentication'],
-    'DEFAULT_PERMISSION_CLASSES':['rest_framework.permissions.IsAuthenticated']}
+# REST_FRAMEWORK={
+#     'DEFAULT_AUTHENTICATION_CLASSES':['rest_framework.authentication.BasicAuthentication'],
+#     'DEFAULT_PERMISSION_CLASSES':['rest_framework.permissions.IsAuthenticated']}
+
+#For after how much time the session will expire in seconds
+SESSION_COOKIE_AGE = 60
