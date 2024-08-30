@@ -6,7 +6,7 @@ from rest_framework import status
 
 from rest_framework.authentication import BasicAuthentication
 
-from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser
 #Generic API views
 
 from django.contrib.auth import logout
@@ -17,7 +17,10 @@ from rest_framework import viewsets
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class=UserSerializer
     queryset=User.objects.all()
-   
+
+    #overriding the global authenticationa and permission to allow any.
+    authentication_classes=[BasicAuthentication]
+    permission_classes=[IsAdminUser]
 
   
    
