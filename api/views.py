@@ -1,4 +1,4 @@
-from api.models import User
+from api.models import Webuser
 from api.serializers import UserSerializer
 from rest_framework.response import Response
 from rest_framework import status
@@ -15,13 +15,23 @@ from django.http import HttpResponseRedirect
 from rest_framework import viewsets
 #it is for model creation
 
+#import custom permissions class
+
+from .customPermissions import CustomizeAPIPermissions
+
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class=UserSerializer
-    queryset=User.objects.all()
-
+    queryset=Webuser.objects.all()
+    
     #overriding the global authenticationa and permission to allow any.
     authentication_classes=[SessionAuthentication]
-    #permission_classes=[IsAdminUser]
+    permission_classes=[CustomizeAPIPermissions]
+
+
+    def perform_create(self, serializer):
+        
+        serializer.save(created_by=self.request.user)
+
       #permission_classes=[IsAuthenticatedOrReadOnly]
       #permission_classes=[IsAuthenticated]
     #django permissions that are only aplicable after authorization, and you manually assign the functionality for Use that it can perform.]
@@ -29,7 +39,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     #anon readonly is variation of the django model permissions as it alow user to view only functionlity without authenticating. but othe ,
     #would be added manualy
-    permission_classes=[DjangoModelPermissionsOrAnonReadOnly] 
+    #permission_classes=[DjangoModelPermissionsOrAnonReadOnly] 
 
    
 

@@ -133,4 +133,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #     'DEFAULT_PERMISSION_CLASSES':['rest_framework.permissions.IsAuthenticated']}
 
 #For after how much time the session will expire in seconds
-SESSION_COOKIE_AGE = 60
+SESSION_COOKIE_AGE = 90

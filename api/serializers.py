@@ -1,7 +1,7 @@
 import rest_framework
 from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer #it is to convert the python dictionry into json as in api only json reponse will be sent.
-from api.models import User
+from api.models import Webuser
 
 # ...........................validator().............................
 # def checkFirstLetter(value):
@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
    # user_country=serializers.CharField(max_length=20,style={'placeholder':'pakistan','required':True},validators=[checkFirstLetter]) 
    
     class Meta:
-        model=User
+        model=Webuser
         fields='__all__'  # exclude=['roll_number']   ;;; fields=['user_name','roll_number'] 
         #validations
         #read_only_fields=['user_email']
