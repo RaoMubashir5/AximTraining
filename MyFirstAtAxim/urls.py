@@ -16,7 +16,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include  # Correctly importing `include`
-
 # # Import views from your app
 # from PracApp import views  # Assuming `PracApp` is your app's name
 
@@ -29,4 +28,5 @@ urlpatterns = [
     
     # Path to the API URLs
     path('api/', include('api.urls')),  # Assuming you have `api/urls.py` for your API routes
+   
 ]

@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+
 #import views from PracApp
 
 
@@ -24,9 +25,8 @@ from api.views import *
 
 urlpatterns = [
     #path to the home page
+    path('user/<pk>/', allUserView,name="singleUser"),
     path('user/', allUserView,name="UserView"),
-    path('user/<int:pk>', detailUserView,name="singleUser"),
-    path('delete/<int:pk>', deleteUserView,name="delete"),
-    path('create/', createUserView,name="create"),
-    path('update/<int:pk>', updateView,name="update"),
+    path('edit/',editUserView,name='edit'),
+    path('edit/<int:pk>/',editUserView,name='edit')
 ]

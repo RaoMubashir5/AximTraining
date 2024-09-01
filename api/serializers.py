@@ -47,7 +47,7 @@ class UserSerializer(serializers.ModelSerializer):
     def validate(self,data):
         country=data.get('user_country')
         age=data.get('user_age')
-        if country:
+        if country and age is not None:
             if (country.lower() in ['united states', 'canada', 'united kingdom', 'germany', 'france']) and age > 30:
                 raise serializers.ValidationError('Your country does not Allow Candidate with this Age greater than 30')
             else:
