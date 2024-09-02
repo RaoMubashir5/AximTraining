@@ -14,8 +14,60 @@ from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from rest_framework import viewsets
 #it is for model creation
-
+from rest_framework.views import APIView
+from django.contrib.auth import authenticate
 #import custom permissions class
+
+
+class registerUser(APIView):
+
+    def post(self, request, *args, **kwargs):
+
+        request_data=request.data
+        
+        serailized=WebUserSerializer(data=request_data)
+
+        if serailized.is_valid():
+            serailized.save
+
+            Response(serailized.data,status=status.HTTP_201_CREATED)
+
+
+       
+
+class loginUser(APIView):
+
+    def post(self, request, *args, **kwargs):
+        request_data=request.data
+        
+        serailized=WebUserSerializer(data=request_data)
+
+        if serailized.is_valid():
+            serailized.save
+
+            Response(serailized.data,status=status.HTTP_201_CREATED)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 from .customPermissions import CustomizeAPIPermissions
 

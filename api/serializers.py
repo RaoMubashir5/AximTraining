@@ -3,37 +3,6 @@ from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer #it is to convert the python dictionry into json as in api only json reponse will be sent.
 from api.models import Webuser
 from django.contrib.auth.models import User
-
-class UserSerailizer(serializers.ModelSerializer):
-
-    class Meta:
-        model=User
-        fields=['username','password']
-    
-
-    #If user is  created by using the terminal
-    # def create(self,validated_data):
-    #     user=User.objects.create(username=validated_data['username'])
-    #     user.set_password(validated_data['password'])
-    #     user.save()
-    #     return user
-     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # ...........................validator().............................
 # def checkFirstLetter(value):
 #     if not value[0].isupper():
@@ -52,7 +21,8 @@ allowed_countries = [ 'united states', 'canada', 'united kingdom', 'germany', 'f
 
 class WebUserSerializer(serializers.ModelSerializer):
      #do not need to declare the fields
-
+    password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
      #for validators you have to do only dor the global that is defined above .
    # user_country=serializers.CharField(max_length=20,style={'placeholder':'pakistan','required':True},validators=[checkFirstLetter]) 
    
@@ -76,19 +46,36 @@ class WebUserSerializer(serializers.ModelSerializer):
                 return value.capitalize()  
         else:
             return value.capitalize()   
-
+    
+    def create(self,validated_data):
+        user_name = validated_data['user_name']
+        user_email = validated_data['user_email']
+        phone_number = validated_data['phone_number']
+        user_age = validated_data['user_age']
+        user_country = validated_data['user_country']
+        
+        user=Webuser.objects.create(user_name=user_name,user_email=user_email,phone_number=phone_number,
+                                    user_age=user_age,user_country=user_country)
+        
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
             # .............................validate(self,data).................................
             # There are the validations for an object that there would be multiple fields to validate, when the serialized.is_valid() function is called.
     def validate(self,data):
-        country=data.get('user_country')
-        age=data.get('user_age')
-        if country and age is not None:
-            if (country.lower() in ['united states', 'canada', 'united kingdom', 'germany', 'france']) and age > 30:
-                raise serializers.ValidationError('Your country does not Allow Candidate with this Age greater than 30')
+        if data.get('password') == data.get('confirm_password'): 
+            country=data.get('user_country')
+            age=data.get('user_age')
+            if country and age is not None:
+                if (country.lower() in ['united states', 'canada', 'united kingdom', 'germany', 'france']) and age > 30:
+                    raise serializers.ValidationError('Your country does not Allow Candidate with this Age greater than 30')
+                else:
+                    return data
             else:
                 return data
         else:
-            return data
+            raise serializers.ValidationError('Your confirmed password is not matching with the Password!!')
+
 
     
     
