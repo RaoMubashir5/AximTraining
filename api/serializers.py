@@ -2,6 +2,37 @@ import rest_framework
 from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer #it is to convert the python dictionry into json as in api only json reponse will be sent.
 from api.models import Webuser
+from django.contrib.auth.models import User
+
+class UserSerailizer(serializers.ModelSerializer):
+
+    class Meta:
+        model=User
+        fields=['username','password']
+    
+
+    #If user is  created by using the terminal
+    # def create(self,validated_data):
+    #     user=User.objects.create(username=validated_data['username'])
+    #     user.set_password(validated_data['password'])
+    #     user.save()
+    #     return user
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # ...........................validator().............................
 # def checkFirstLetter(value):
@@ -16,7 +47,10 @@ allowed_countries = [ 'united states', 'canada', 'united kingdom', 'germany', 'f
 
 #Modelserializer shortcut:
 
-class UserSerializer(serializers.ModelSerializer):
+
+
+
+class WebUserSerializer(serializers.ModelSerializer):
      #do not need to declare the fields
 
      #for validators you have to do only dor the global that is defined above .

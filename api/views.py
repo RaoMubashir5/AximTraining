@@ -1,5 +1,5 @@
 from api.models import Webuser
-from api.serializers import UserSerializer
+from api.serializers import WebUserSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -19,12 +19,14 @@ from rest_framework import viewsets
 
 from .customPermissions import CustomizeAPIPermissions
 
+
 class UserViewSet(viewsets.ModelViewSet):
-    serializer_class=UserSerializer
+    
+    serializer_class=WebUserSerializer
     queryset=Webuser.objects.all()
     
     #overriding the global authenticationa and permission to allow any.
-    authentication_classes=[SessionAuthentication]
+    authentication_classes=[TokenAuthentication]
     permission_classes=[CustomizeAPIPermissions]
 
 

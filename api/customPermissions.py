@@ -4,24 +4,32 @@ class CustomizeAPIPermissions(BasePermission):
 
     def has_permission(self, request, view):  #user level permissions 
                # Allow POST for authenticated users to create new records
+        print("here is the check start",request.auth,request.user,request.method)
         if request.method in ['POST','GET']:
-            return request.user.is_authenticated
+            print("first is the check start",request.method)
+            return request.user.is_authenticated and request.auth
         
         # Allow PUT, PATCH, DELETE if user is authenticated
-        if request.method in ['PUT', 'PATCH', 'DELETE']:
+        if request.method in ['PUT', 'PATCH', 'DELETE','OPTIONS']:
+            print("Second is the check start",request.method)
             return request.user.is_authenticated
 
 
     def has_object_permission(self, request, view, obj):
            # Debugging print statements
-        print(f"Request User: {request.user}")
-        print(f"Object Creator: {obj.created_by}")
-        
+        print("object is the check start",request.method)
+        print(f"Request User: {request.user}",request.method)
+        print(f"Object Creator: {obj.created_by}",request.method)
+        print(f"Object Creator: {request.auth}",request.method)
         # Allow GET, PUT, PATCH, and DELETE if user is a superuser
         # Allow PUT, PATCH, and DELETE if the user created the object
-        if request.method in ['GET','PUT', 'PATCH', 'DELETE']:
+        if (request.method in ['GET','PUT', 'PATCH', 'DELETE','OPTIONS'] and request.auth):
+            print("if ka andr aya ha",request.method)
             if (obj.created_by == request.user) or request.user.is_superuser:
+                print("sahi banda ha",request.method)
                 return True
     
         # Deny access for other methods
-        return False
+        else:
+            print("ab codition false",request.method)
+            return False
