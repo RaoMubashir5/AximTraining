@@ -19,12 +19,13 @@ class CustomizeAPIPermissions(BasePermission):
     def has_object_permission(self, request, view, obj):
            # Debugging print statements
         print("object is the check start",request.method)
-        print(f"Request User: {request.user}",request.method)
-        print(f"Object Creator: {obj.created_by}",request.method)
-        print(f"Object Creator: {request.auth}",request.method)
+        print(f"Request User: {request.user.id}",request.method)
+        print(f"Object Creator: {obj.created_by.id}",request.method)
+        print(f"token: {request.auth}",request.method)
         # Allow GET, PUT, PATCH, DELETE, OPTIONS if the user created the object or is a superuser
         if request.method in ['GET', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']:
-            return obj.created_by == request.user or request.user.is_superuser
+            print("coming in")
+            return obj.created_by.id == request.user.id or request.user.is_superuser
         
         # Deny access for other methods
         return False
