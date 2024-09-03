@@ -4,7 +4,8 @@ class CustomizeAPIPermissions(BasePermission):
 
     def has_permission(self, request, view):  #user level permissions 
                # Allow POST for authenticated users to create new records
-        print("here is the check start",request.auth,request.user,request.method)
+
+        print("here is the check start",request.auth,request.user,request.method,request.user.is_authenticated)
         if request.method in ['POST','GET']:
             print("first is the check start",request.method)
             return request.user.is_authenticated and request.auth
@@ -21,15 +22,10 @@ class CustomizeAPIPermissions(BasePermission):
         print(f"Request User: {request.user}",request.method)
         print(f"Object Creator: {obj.created_by}",request.method)
         print(f"Object Creator: {request.auth}",request.method)
-        # Allow GET, PUT, PATCH, and DELETE if user is a superuser
-        # Allow PUT, PATCH, and DELETE if the user created the object
-        if (request.method in ['GET','PUT', 'PATCH', 'DELETE','OPTIONS'] and request.auth):
-            print("if ka andr aya ha",request.method)
-            if (obj.created_by == request.user) or request.user.is_superuser:
-                print("sahi banda ha",request.method)
-                return True
-    
+        # Allow GET, PUT, PATCH, DELETE, OPTIONS if the user created the object or is a superuser
+        if request.method in ['GET', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']:
+            return obj.created_by == request.user or request.user.is_superuser
+        
         # Deny access for other methods
-        else:
-            print("ab codition false",request.method)
-            return False
+        return False
+    

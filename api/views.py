@@ -2,7 +2,9 @@ from api.models import Webuser
 from api.serializers import WebUserSerializer
 from rest_framework.response import Response
 from rest_framework import status
-
+from django.shortcuts import render,redirect
+from django.http import  JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.authentication import BasicAuthentication,SessionAuthentication,TokenAuthentication
 
@@ -10,45 +12,110 @@ from rest_framework.permissions import IsAuthenticated,AllowAny,IsAdminUser,IsAu
 from rest_framework.permissions import DjangoModelPermissions,DjangoModelPermissionsOrAnonReadOnly
 #Generic API views
 
+from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from django.contrib.auth import logout
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,Http404,HttpResponse
 from rest_framework import viewsets
 #it is for model creation
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 #import custom permissions class
+from rest_framework.decorators import authentication_classes,permission_classes,api_view
+from api.customPermissions import CustomizeAPIPermissions
+
+@csrf_exempt
+def registerUser(request):
+    if request.method=='POST':
+        username=request.POST.get('username')
+        useremail=request.POST.get('email')
+        password=request.POST.get('password1')
+        password2=request.POST.get('password2')
+        if password != password2:
+            return HttpResponse("Confiem password does not match")
+        try:
+            user=Webuser.objects.create(username=username,email=useremail)
+            user.set_password(password)
+            user.created_by=user   #user.created.created_by=self.instance
+            user.save()
+            return HttpResponse("User is created successfully.")
+        except Exception as e:
+            # Handle other exceptions
+            return HttpResponse(f"email should be unique.")
+       
+    else:
+        return Http404()
 
 
-class registerUser(APIView):
 
-    def post(self, request, *args, **kwargs):
-
-        request_data=request.data
-        
-        serailized=WebUserSerializer(data=request_data)
-
-        if serailized.is_valid():
-            serailized.save
-
-            Response(serailized.data,status=status.HTTP_201_CREATED)
 
 
        
+@csrf_exempt
+def loginUser(request):
+    if request.method=='POST':
+       
+       username=request.POST.get('username')
+       password=request.POST.get('password1')
+       print(username,password)
+       user=authenticate(username=username,password=password)
 
-class loginUser(APIView):
+       if user is not None:
+           refresh_and_access_token=RefreshToken.for_user(user)
+           access_token = str(refresh_and_access_token.access_token)
+           refresh_token = str(refresh_and_access_token)
+           response_to_be_send={
+               'username':username,
+               'access': access_token,
+               'refresh':refresh_token,
+           }
+           return JsonResponse(response_to_be_send,status=status.HTTP_200_OK)
+       else:
+           response_to_be_send={
+               'response':"Invalid crededentials.!!",
+           }
+           return JsonResponse(response_to_be_send,status=status.HTTP_400_BAD_REQUEST)  
+    
 
-    def post(self, request, *args, **kwargs):
-        request_data=request.data
+@api_view(['GET'])
+@authentication_classes([JWTTokenUserAuthentication])
+@permission_classes([CustomizeAPIPermissions])
+def get_register_users(request,pk=None):
+
+    if request.method=='GET':
+        if pk is None:
+            user=Webuser.objects.all()
+            serialized=WebUserSerializer(user,many=True)
+            return Response({'user':serialized.data})
         
-        serailized=WebUserSerializer(data=request_data)
+        else:
+            user=Webuser.objects.get(id=pk)
+            serialized=WebUserSerializer(user,many=False)
+            return Response({'user':serialized.data})
+    else:
+        return Response("PLease make Get requests only")
+    
+    if request.method == 'PUT':
+        if pk is not None:
+           data= request.data
+           serialized=WebUserSerializer(data=data)
+           if serialized.is_valid():
+                serialized.save()
+                return Response(serialized.data,status=status.HTTP_200_OK)
+        return Response("You are not adding the pk")
 
-        if serailized.is_valid():
-            serailized.save
+        if request.method=='PATCH':
+            if pk is not None:
+                data= request.data
+                serialized=WebUserSerializer(data=data,partial=True)
+                if serialized.is_valid():
+                        serialized.save()
+                        return Response(serialized.data,status=status.HTTP_200_OK)
+            return Response("You are not adding the pk")
 
-            Response(serailized.data,status=status.HTTP_201_CREATED)
-
-
-
+    
+    
 
 
 

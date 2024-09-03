@@ -1,19 +1,15 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 # Create your models here.
-class Webuser(models.Model):
-    user_name=models.CharField(max_length=30,null=False,blank=False)
-    user_email=models.EmailField(unique=True,default="user@gmail.com",blank=False)
-    phone_number=models.CharField(unique=True,null=False,blank=False)
-    user_age=models.IntegerField()
-    user_country=models.CharField(max_length=20,null=True,blank=True)
-    created_by=models.OneToOneField('self',on_delete=models.CASCADE)   # it is  the built in User class that 
-    passwordpassword = models.CharField(null=False,blank=False)
-    confirm_password = models.CharField(null=False,blank=False)
+class Webuser(AbstractUser):
     
-    def __str__(self) -> str:
-        return f'{self.user_name} , {self.phone_number}'
+    created_by=models.OneToOneField('self',null=True, on_delete=models.CASCADE)
+    email=models.EmailField(null=False,blank=False,unique=True)
+    
+    def __str__(self):
+        return f'{self.username} ... {self.created_by}'
     class Meta:
-        ordering=['user_age']
-        verbose_name="User Model"
-    
+        verbose_name='webUser'
+        
+
+

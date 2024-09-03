@@ -134,4 +134,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #     'DEFAULT_PERMISSION_CLASSES':['rest_framework.permissions.IsAuthenticated']}
 
 #For after how much time the session will expire in seconds
-SESSION_COOKIE_AGE = 90
+#SESSION_COOKIE_AGE = 90
+
+# Define my custom user model
+AUTH_USER_MODEL = 'api.Webuser'
+
