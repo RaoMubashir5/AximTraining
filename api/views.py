@@ -29,6 +29,7 @@ from django.db.utils import IntegrityError
 
 
 @csrf_exempt
+@api_view(['POST'])
 def registerUser(request):
     if request.method == 'POST':
         username = request.POST.get('username')
