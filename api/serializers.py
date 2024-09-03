@@ -30,6 +30,17 @@ class WebUserSerializer(serializers.ModelSerializer):
         user.created_by=user   #user.created.created_by=self.instance
         user.save()
         return user
+    def update(self,instance,validated_data):
+        instance.username=validated_data.get('username',instance.username)
+        instance.useremail=validated_data.get('email',instance.email)
+      
+        if 'password' in validated_data:
+            instance.set_password(validated_data.get('password'))
+            instance.save()
+        
+        return instance
+             
+        
     
     # def update(self,instance,validated_data):
       

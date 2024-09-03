@@ -57,10 +57,10 @@ def loginUser(request):
     if request.method=='POST':
        
        username=request.POST.get('username')
-       password=request.POST.get('password1')
+       password=request.POST.get('password')
        print(username,password)
        user=authenticate(username=username,password=password)
-
+       print(user)
        if user is not None:
            refresh_and_access_token=RefreshToken.for_user(user)
            access_token = str(refresh_and_access_token.access_token)
@@ -78,7 +78,7 @@ def loginUser(request):
            return JsonResponse(response_to_be_send,status=status.HTTP_400_BAD_REQUEST)  
     
 
-@api_view(['GET'])
+@api_view(['GET','PUT','PATCH','OPTIONS'])
 @authentication_classes([JWTTokenUserAuthentication])
 @permission_classes([CustomizeAPIPermissions])
 def get_register_users(request,pk=None):
@@ -93,28 +93,36 @@ def get_register_users(request,pk=None):
             user=Webuser.objects.get(id=pk)
             serialized=WebUserSerializer(user,many=False)
             return Response({'user':serialized.data})
-    else:
-        return Response("PLease make Get requests only")
-    
     if request.method == 'PUT':
         if pk is not None:
+           instance=Webuser.objects.get(id=pk)
            data= request.data
-           serialized=WebUserSerializer(data=data)
+           serialized=WebUserSerializer(instance,data=data)
            if serialized.is_valid():
                 serialized.save()
                 return Response(serialized.data,status=status.HTTP_200_OK)
         return Response("You are not adding the pk")
 
-        if request.method=='PATCH':
+    if request.method=='PATCH':
+        if pk is not None:
+            instance=Webuser.objects.get(id=pk)
+            data= request.data
+            serialized=WebUserSerializer(instance,data=data,partial=True)
+            if serialized.is_valid():
+                    print("validete nhi hoa")
+                    serialized.save()
+                    return Response(serialized.data,status=status.HTTP_200_OK)
+            else:
+                return Response(serialized.errors,status=status.HTTP_400_BAD_REQUEST)
+        return Response("You are not adding the pk")
+
+    if request.method=='DELETE':
             if pk is not None:
-                data= request.data
-                serialized=WebUserSerializer(data=data,partial=True)
-                if serialized.is_valid():
-                        serialized.save()
-                        return Response(serialized.data,status=status.HTTP_200_OK)
+                instance=Webuser.objects.get(id=pk).delete()
+                return Response(serialized.data,status=status.HTTP_200_OK)
             return Response("You are not adding the pk")
 
-    
+        
     
 
 
