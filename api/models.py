@@ -7,7 +7,7 @@ class Webuser(AbstractUser):
     email=models.EmailField(null=False,blank=False,unique=True)
     
     def __str__(self):
-        return f'{self.username} ... {self.created_by}'
+        return f'{self.username}'
     class Meta:
         verbose_name='webUser'
         

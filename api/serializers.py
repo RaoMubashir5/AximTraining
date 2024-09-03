@@ -20,24 +20,23 @@ class WebUserSerializer(serializers.ModelSerializer):
         model=Webuser
         fields=['username','email','password','confirm_password']
     
-    def create(self,validated_data):
-        username=validated_data['username']
-        useremail=validated_data['email']
-        password=validated_data['password']
+    # def create(self,validated_data):
+    #     username=validated_data['username']
+    #     useremail=validated_data['email']
+    #     password=validated_data['password']
 
-        user=Webuser.objects.create(username=username,email=useremail)
-        user.set_password(password)
-        user.created_by=user   #user.created.created_by=self.instance
-        user.save()
-        return user
+    #     user=Webuser.objects.create(username=username,email=useremail)
+    #     user.set_password(password)
+    #     user.created_by=user   #user.created.created_by=self.instance
+    #     user.save()
+    #     return user
     def update(self,instance,validated_data):
         instance.username=validated_data.get('username',instance.username)
-        instance.useremail=validated_data.get('email',instance.email)
+        instance.email=validated_data.get('email',instance.email)
       
         if 'password' in validated_data:
             instance.set_password(validated_data.get('password'))
-            instance.save()
-        
+        instance.save()
         return instance
              
         
@@ -55,7 +54,7 @@ class WebUserSerializer(serializers.ModelSerializer):
             # .............................validate(self,data).................................
             # There are the validations for an object that there would be multiple fields to validate, when the serialized.is_valid() function is called.
     def validate(self,data):
-        if data.get('password1')!=data.get('password2'):
+        if data.get('password')!=data.get('confirm_password'):
             raise serializers.ValidationError('Your confirming password is not matching!!')
         else:
              return data
@@ -64,7 +63,7 @@ class WebUserSerializer(serializers.ModelSerializer):
     
 class loginSerializer(serializers.Serializer):
     email=serializers.CharField(required=True)
-    password1=serializers.CharField( write_only='password1',required=True)
+    password=serializers.CharField( write_only='password',required=True)
           
 
 

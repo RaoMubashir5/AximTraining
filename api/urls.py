@@ -13,7 +13,7 @@ routers=DefaultRouter()
 
 #register the route with the ViewSet class
 
-routers.register('user',UserViewSet,basename='bname')
+
 
 urlpatterns=[
     path('register/',registerUser,name='registerUser'),
@@ -21,6 +21,6 @@ urlpatterns=[
     path('refresh/', TokenRefreshView.as_view()),
     path('varify/', TokenVerifyView.as_view()),
     path('login/',loginUser,name='login'),
-    path('user/',get_register_users,name='user'),
-    path('user/<int:pk>',get_register_users,name='user'),
+    path('user/',get_register_users.as_view(),name='user'),
+    path('user/<int:pk>',get_register_users.as_view(),name='user'),
 ]

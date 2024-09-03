@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'PracApp',
     'rest_framework',
     'api',
-    'rest_framework.authtoken',
+  #  'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [

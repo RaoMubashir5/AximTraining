@@ -24,31 +24,38 @@ from django.contrib.auth import authenticate
 #import custom permissions class
 from rest_framework.decorators import authentication_classes,permission_classes,api_view
 from api.customPermissions import CustomizeAPIPermissions
+from django.core.exceptions import ValidationError
+from django.db.utils import IntegrityError
+
 
 @csrf_exempt
 def registerUser(request):
-    if request.method=='POST':
-        username=request.POST.get('username')
-        useremail=request.POST.get('email')
-        password=request.POST.get('password1')
-        password2=request.POST.get('password2')
-        if password != password2:
-            return HttpResponse("Confiem password does not match")
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        useremail = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        print(f"Username: {username}, Email: {useremail}, Password: {password}, Confirm Password: {confirm_password}")
+
+        if password != confirm_password:
+            return JsonResponse({'error': 'Confirm password does not match'}, status=400)
+        
         try:
-            user=Webuser.objects.create(username=username,email=useremail)
+            user = Webuser(username=username, email=useremail)
             user.set_password(password)
-            user.created_by=user   #user.created.created_by=self.instance
             user.save()
-            return HttpResponse("User is created successfully.")
+            user.created_by = user  # Assuming self-referencing user as creator
+            user.save()
+            return JsonResponse({'message': 'User is created successfully.'}, status=201)
+        except IntegrityError:
+            return JsonResponse({'error': 'Email should be unique or another integrity issue occurred.'}, status=400)
+        except ValidationError as e:
+            return JsonResponse({'error': f'Validation error: {e}'}, status=400)
         except Exception as e:
-            # Handle other exceptions
-            return HttpResponse(f"email should be unique.")
-       
+            return JsonResponse({'error': f'An unexpected error occurred: {e}'}, status=500)
     else:
-        return Http404()
-
-
-
+        return JsonResponse({'error': 'Method not allowed.'}, status=405)
 
 
        
@@ -59,7 +66,7 @@ def loginUser(request):
        username=request.POST.get('username')
        password=request.POST.get('password')
        print(username,password)
-       user=authenticate(username=username,password=password)
+       user=authenticate(request,username=username,password=password)
        print(user)
        if user is not None:
            refresh_and_access_token=RefreshToken.for_user(user)
@@ -78,24 +85,28 @@ def loginUser(request):
            return JsonResponse(response_to_be_send,status=status.HTTP_400_BAD_REQUEST)  
     
 
-@api_view(['GET','PUT','PATCH','OPTIONS'])
-@authentication_classes([JWTTokenUserAuthentication])
-@permission_classes([CustomizeAPIPermissions])
-def get_register_users(request,pk=None):
 
-    if request.method=='GET':
+class get_register_users(APIView):
+    authentication_classes=[JWTTokenUserAuthentication]
+    permission_classes=[CustomizeAPIPermissions]
+
+    def get(self,request,pk=None):
         if pk is None:
             user=Webuser.objects.all()
             serialized=WebUserSerializer(user,many=True)
             return Response({'user':serialized.data})
         
         else:
+            instance=Webuser.objects.get(id=pk)
+            self.check_object_permissions(request,instance)
             user=Webuser.objects.get(id=pk)
             serialized=WebUserSerializer(user,many=False)
             return Response({'user':serialized.data})
-    if request.method == 'PUT':
+    def put(self,request,pk=None):
+        
         if pk is not None:
            instance=Webuser.objects.get(id=pk)
+           self.check_object_permissions(request,instance)
            data= request.data
            serialized=WebUserSerializer(instance,data=data)
            if serialized.is_valid():
@@ -103,9 +114,11 @@ def get_register_users(request,pk=None):
                 return Response(serialized.data,status=status.HTTP_200_OK)
         return Response("You are not adding the pk")
 
-    if request.method=='PATCH':
+    def patch(self,request,pk=None):
+        
         if pk is not None:
             instance=Webuser.objects.get(id=pk)
+            self.check_object_permissions(request,instance)
             data= request.data
             serialized=WebUserSerializer(instance,data=data,partial=True)
             if serialized.is_valid():
@@ -116,10 +129,12 @@ def get_register_users(request,pk=None):
                 return Response(serialized.errors,status=status.HTTP_400_BAD_REQUEST)
         return Response("You are not adding the pk")
 
-    if request.method=='DELETE':
+    def delete(self,request,pk=None):
             if pk is not None:
-                instance=Webuser.objects.get(id=pk).delete()
-                return Response(serialized.data,status=status.HTTP_200_OK)
+                instance=Webuser.objects.get(id=pk)
+                self.check_object_permissions(request,instance)
+                instance.delete()
+                return Response(status=status.HTTP_200_OK)
             return Response("You are not adding the pk")
 
         
@@ -142,37 +157,3 @@ def get_register_users(request,pk=None):
 
 
 
-
-
-from .customPermissions import CustomizeAPIPermissions
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    
-    serializer_class=WebUserSerializer
-    queryset=Webuser.objects.all()
-    
-    #overriding the global authenticationa and permission to allow any.
-    authentication_classes=[TokenAuthentication]
-    permission_classes=[CustomizeAPIPermissions]
-
-
-    def perform_create(self, serializer):
-        
-        serializer.save(created_by=self.request.user)
-
-      #permission_classes=[IsAuthenticatedOrReadOnly]
-      #permission_classes=[IsAuthenticated]
-    #django permissions that are only aplicable after authorization, and you manually assign the functionality for Use that it can perform.]
-    #permission_classes=[DjangoModelPermissions]  #super user have all the permissions by default
-
-    #anon readonly is variation of the django model permissions as it alow user to view only functionlity without authenticating. but othe ,
-    #would be added manualy
-    #permission_classes=[DjangoModelPermissionsOrAnonReadOnly] 
-
-   
-
-   
-
-
-     
